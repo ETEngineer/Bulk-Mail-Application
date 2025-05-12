@@ -1,0 +1,66 @@
+.Navbar-Container
+{
+    background-color: #1E1E1E;
+    border-bottom: 1px solid;
+    border-color:#3C3C3C;
+
+    height: 70px;
+
+    display : flex;
+    align-items: center;
+    justify-content: space-around;
+
+    color: white;
+}
+
+.Logo-Container
+{
+    display : flex;
+    align-items: center;
+
+    height : 40px;
+    width  : auto;
+
+    background-color: green;
+}
+
+.SearchBar-Container
+{
+    display : flex;
+    align-items: center;
+    gap : 5px;
+    
+    height: 40px;
+    width : 900px;
+
+    background-color: rgba(60, 60, 60, 0.3);
+    border-radius: 10px;
+    padding-left : 10px;
+}
+
+.Upload-Container
+{
+    display : flex;
+    justify-content: center;
+    align-items : center;
+
+    max-width : 40px;
+    max-height : 40px;
+
+    background-color: purple;
+}
+
+.Profile-Container 
+{
+    display : flex;
+    align-items : center;
+
+    height: 40px;
+    max-width : 122px;
+
+    background-color : blue;
+}
+
+.Profile-Container p {
+    margin : 0;
+}

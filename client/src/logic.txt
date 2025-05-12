@@ -1,0 +1,109 @@
+import React, { useState } from 'react';
+import axios from "axios";
+import "./App.css";
+
+const GmailContactsExtractor = () => {
+
+  const [contacts, setContacts] = useState([]);
+  const API = axios.create({baseURL : "http://localhost:5000"})
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const text = e.target.result;
+      const lines = text.split('\n');
+      const gmailContacts = lines
+        .map((line) => line.split(','))
+        .filter((fields) => fields[0].trim().toLowerCase())
+        .map((fields, index) => ({
+          serialNumber: index + 1,
+          email: fields[0].trim() + "@sastra.ac.in",
+          status: "Not started",
+        }));
+
+      setContacts(gmailContacts);
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleDelete = (index) => {
+    const updatedContacts = contacts.filter((contact, i) => i !== index);
+    setContacts(
+      updatedContacts.map((contact, i) => ({
+        ...contact,
+        serialNumber: i + 1,
+      }))
+    );
+  };
+
+  const handleSendEmail = (email) => {
+    // Handle sending email logic here
+    alert(`Sending email to ${email}`);
+  };
+
+  const handleBulkSubmit = async () => {
+    const table = document.getElementById("Contacts-Table");
+    for (var i = 1, row; row = table.rows[i]; i++) {
+      var email = row.cells[1].innerHTML;
+      email = email.replace('\r', '');
+      const message = row.cells[2].innerHTML;
+      row.cells[3].innerHTML = "Loading";
+      await API.post("/messages/send", {email : email, message : message})
+      .then( (response) => {
+        row.cells[3].innerHTML = "Sent Successfully";
+      })
+      .catch( (error) => {
+        row.cells[3].innerHTMl = "Errors";
+      })
+    }
+  };
+
+
+  return(
+    <div className = "Main-Container">
+      <div className = "Input-Field">
+        <p>Upload the file containing email and corresponding messages</p>
+        <input type = "file" accept = ".csv" onChange={handleFileChange} />
+      </div>
+      <div className = "Title-Container">
+      <table className = "Table" id = "Contacts-Table">
+                <thead>
+                    <tr>
+                        <th style={{ width: '5%' }}>ID</th>
+                        <th style={{ width: '20%' }}>Mail</th>
+                        <th style={{ width: '30%' }}>Subject</th>
+                        <th style={{ width: '10%' }}>Message</th>
+                        <th style={{ width: '5%' }}>Status</th>
+                        <th style={{ width: '15%' }}>Random</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {contacts.map((contact, index) => (
+                  <tr key = {index} >
+                        <td style={{ width: '5%' }}>{contact.serialNumber}</td>
+                        <td style={{ width: '20%' }}>{contact.email}</td>
+                        <td style={{ width: '30%' }}>Hi hello how are you holding up ?...</td>
+                        <td class = "Status" style={{ width: '10%' }}>{contact.status}</td>
+                        <td style={{ width: '5%'}}>
+                          <button onClick={() => handleDelete(index)}>Delete</button>
+                        </td>
+                        <td style={{ width: '15%' }}>
+                          <button onClick={() => handleSendEmail(contact.email)}>Send Email</button>
+                        </td>
+                        <td style={{ width: '15%' }}>Bleh</td>
+                  </tr>
+                  ))}
+                </tbody>
+      </table>
+      <p>Enter the common message :</p>
+      <input type = "text" />
+      <button type = "submit" onClick = {handleBulkSubmit}>Bulk Submit</button>
+      </div>
+    </div>
+  )
+};
+
+export default GmailContactsExtractor;
